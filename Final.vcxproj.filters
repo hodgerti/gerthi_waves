@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="glad\src\glad.c">
+      <Filter>glad</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\delta_time.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfw_helper.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\textures.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\transform.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="stb\stb.cpp">
+      <Filter>stb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wave_shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="glad">
+      <UniqueIdentifier>{7f381fc3-87da-4e16-b226-1e7482fa1370}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glfw">
+      <UniqueIdentifier>{da5cc88d-4f84-4824-8a9e-cb83f47600b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{0fddede6-9b56-4ac5-aea2-9b9bb8dbf534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stb">
+      <UniqueIdentifier>{1a93c3db-8fd2-4fc8-9a42-d7f577bcd2dc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="glad\include\glad\glad.h">
+      <Filter>glad</Filter>
+    </ClInclude>
+    <ClInclude Include="glad\include\KHR\khrplatform.h">
+      <Filter>glad</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\include\glfw3.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\include\glfw3native.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\delta_time.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw_helper.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\textures.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transform.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wave_shader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
