@@ -19,7 +19,7 @@
 #define NUM_POINT_LIGHTS			10
 #define NUM_SPOT_LIGHTS				4
 #define NUM_DIRECTIONAL_LIGHTS		2
-#define NUM_WAVES					2
+#define NUM_WAVES					3
 
 /************************************
 * Types

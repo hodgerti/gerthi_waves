@@ -31,7 +31,7 @@ struct wave_info
 	float crest_constant;
 	vec2 direction;
 };
-#define NUM_WAVES		2
+#define NUM_WAVES		3
 uniform int				u_num_waves;
 uniform wave_info 		u_waves_infos[ NUM_WAVES ];
 uniform float			u_wave_time;

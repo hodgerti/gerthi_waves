@@ -56,15 +56,15 @@ DeltaTime			delta_time( glfwGetTime );
 
 // WAVES:
 glm::vec3 wave_dimensions			= glm::vec3( 20.0f, 3.0f, 20.0f );
-int									wave_xoops = 64, wave_yoops = 0, wave_zoops = 64;
+int									wave_xoops = 100, wave_yoops = 0, wave_zoops = 100;
 int num_waves = 3;
 struct wave_info waves_infos[ 3 ] = 
 {
 	// wave 0 (big)
 	{
-		1.6f,	// frequency
-		0.32f,	// amplitude
-		3.0f,	// phase constant (speed)
+		1.85f,	// frequency
+		0.24f,	// amplitude
+		2.6f,	// phase constant (speed)
 		2.5f,	// roll constant
 		0.5f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
 		glm::vec2( 0.8f, 0.2f )	// direction
@@ -80,11 +80,11 @@ struct wave_info waves_infos[ 3 ] =
 	},
 	// wave 2 (very cool)
 	{
-		6.4f,	// frequency
-		0.3f,	// amplitude
+		6.4,	// frequency
+		0.12f,	// amplitude
 		1.2f,	// phase constant (speed)
 		3.6f,	// roll constant
-		3.5f,	// crest constant
+		0.34f,	// crest constant
 		glm::vec2( -0.9f, -0.4f )	// direction
 	}
 };
