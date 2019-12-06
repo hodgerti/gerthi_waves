@@ -28,6 +28,7 @@ struct wave_info
 	float amplitude;
 	float phase_constant;
 	float roll_constant;
+	float crest_constant;
 	vec2 direction;
 };
 #define NUM_WAVES		2
@@ -35,49 +36,28 @@ uniform int				u_num_waves;
 uniform wave_info 		u_waves_infos[ NUM_WAVES ];
 uniform float			u_wave_time;
 
-float wave_height( float frequency, float amplitude, float phase_constant, float roll_constant, vec2 direction, vec2 position, float time )
+vec3 gerstner_wave( vec3 start_position, float time )
 {
-	return 2.0 * amplitude * pow( (sin((dot(direction, position) * frequency) + (time * phase_constant)) + 1.0) / 2.0, roll_constant );
-}
-
-float wave_heights( vec2 position, float time )
-{
-	float height = 0.0;
+	vec2 position = vec2(start_position.x, start_position.z);
+	
+	float x_value = start_position.x;
 	for( int wdx = 0; wdx < u_num_waves; wdx++ )
 	{
-		height += wave_height( u_waves_infos[wdx].frequency, u_waves_infos[wdx].amplitude, u_waves_infos[wdx].phase_constant, u_waves_infos[wdx].roll_constant, u_waves_infos[wdx].direction, position, time );
+		x_value += u_waves_infos[wdx].crest_constant*u_waves_infos[wdx].amplitude * u_waves_infos[wdx].direction.x*cos(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
 	}
-	return height;
-}
-
-float dFdx_mine( float frequency, float amplitude, float phase_constant, float roll_constant, vec2 direction, vec2 position, float time )
-{
-	return roll_constant*direction.x*frequency*amplitude*pow((sin((dot(direction,position)*frequency)+(time*phase_constant))+1.0)/2.0,roll_constant-1.0)*cos((dot(direction,position)*frequency)+(time*phase_constant)); 
-}
-
-float dFdy_mine( float frequency, float amplitude, float phase_constant, float roll_constant, vec2 direction, vec2 position, float time )
-{
-	return roll_constant*direction.y*frequency*amplitude*pow((sin((dot(direction,position)*frequency)+(time*phase_constant))+1.0)/2.0,roll_constant-1.0)*cos((dot(direction,position)*frequency)+(time*phase_constant)); 
-}
-
-float dFdx_all( vec2 position, float time )
-{
-	float value = 0.0;
+	float z_value = start_position.z;
 	for( int wdx = 0; wdx < u_num_waves; wdx++ )
 	{
-		value += dFdx_mine( u_waves_infos[wdx].frequency, u_waves_infos[wdx].amplitude, u_waves_infos[wdx].phase_constant, u_waves_infos[wdx].roll_constant, u_waves_infos[wdx].direction, position, time );
+		z_value += u_waves_infos[wdx].crest_constant*u_waves_infos[wdx].amplitude * u_waves_infos[wdx].direction.y*cos(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
 	}
-	return value;	
-}
-
-float dFdy_all( vec2 position, float time )
-{
-	float value = 0.0;
+	float height = start_position.y;
 	for( int wdx = 0; wdx < u_num_waves; wdx++ )
 	{
-		value += dFdy_mine( u_waves_infos[wdx].frequency, u_waves_infos[wdx].amplitude, u_waves_infos[wdx].phase_constant, u_waves_infos[wdx].roll_constant, u_waves_infos[wdx].direction, position, time );
+		height += u_waves_infos[wdx].amplitude*sin(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
 	}
-	return value;	
+	
+	return vec3(x_value, height, z_value);
+	
 }
 
 void main()
@@ -88,12 +68,10 @@ void main()
 	if( a_pos.y >= 0.5f )
 	{	
 		// find wave height:
-		vec2 flat_pos = vec2(a_pos.x, a_pos.z);
-		float height = wave_heights(flat_pos, u_wave_time);
-		new_pos = vec3(a_pos.x, height + a_pos.y, a_pos.z);
-		vec3 binormal = vec3(1.0, dFdx_all(flat_pos, u_wave_time), 0.0);  // for x
-		vec3 tangent = vec3(0.0, dFdy_all(flat_pos, u_wave_time), 1.0);  // for z
-		new_normal = cross(binormal, tangent);
+		new_pos = gerstner_wave( a_pos, u_wave_time );
+		// vec3 binormal = vec3(1.0, dFdx_all(flat_pos, u_wave_time), 0.0);  // for x
+		// vec3 tangent = vec3(0.0, dFdy_all(flat_pos, u_wave_time), 1.0);  // for z
+		// new_normal = cross(binormal, tangent);
 		
 		// find wave color:
 		v_material_out.ambient = vec3( 0.01, 0.1, 0.06 );
@@ -117,8 +95,7 @@ void main()
     gl_Position = u_projection * u_view * u_model * vec4(new_pos, 1.0);
 	
 	// apply normal matrix to normal and pipe out
-	v_normal = mat3( transpose( inverse( u_model ) ) ) * a_normal;
-	// v_normal = mat3( transpose( inverse( u_model ) ) ) * new_normal;
+	v_normal = mat3( transpose( inverse( u_model ) ) ) * new_normal;
 	
 	// pipe out texture coords
 	v_tex_coord = a_tex_coord;

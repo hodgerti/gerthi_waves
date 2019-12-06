@@ -72,6 +72,7 @@ struct wave_info
 	float amplitude;
 	float phase_constant;
 	float roll_constant;
+	float crest_constant;
 	glm::vec2 direction;
 };
 

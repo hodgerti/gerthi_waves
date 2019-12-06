@@ -57,15 +57,16 @@ DeltaTime			delta_time( glfwGetTime );
 // WAVES:
 glm::vec3 wave_dimensions			= glm::vec3( 20.0f, 3.0f, 20.0f );
 int									wave_xoops = 64, wave_yoops = 0, wave_zoops = 64;
-int num_waves = 2;
-struct wave_info waves_infos[ 2 ] = 
+int num_waves = 3;
+struct wave_info waves_infos[ 3 ] = 
 {
 	// wave 0 (big)
 	{
 		1.6f,	// frequency
-		0.48f,	// amplitude
+		0.32f,	// amplitude
 		3.0f,	// phase constant (speed)
 		2.5f,	// roll constant
+		0.5f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
 		glm::vec2( 0.8f, 0.2f )	// direction
 	},
 	// wave 1 (small)
@@ -74,7 +75,17 @@ struct wave_info waves_infos[ 2 ] =
 		0.1f,	// amplitude
 		6.0f,	// phase constant (speed)
 		0.5f,	// roll constant
+		0.5f,	// crest constant
 		glm::vec2( -0.2f, 0.9f )	// direction
+	},
+	// wave 2 (very cool)
+	{
+		6.4f,	// frequency
+		0.3f,	// amplitude
+		1.2f,	// phase constant (speed)
+		3.6f,	// roll constant
+		3.5f,	// crest constant
+		glm::vec2( -0.9f, -0.4f )	// direction
 	}
 };
 
@@ -92,8 +103,8 @@ glm::vec4 NIGHT_BACKCOLOR = DAY_BACKCOLOR / 3.0f;
 
 // LIGHTS:
 // point lights:
-int num_point_lights = 1;
-struct point_light point_lights[ 1 ] = 
+int num_point_lights = 2;
+struct point_light point_lights[ 2 ] = 
 {
 	// light 0
 	{
@@ -101,11 +112,18 @@ struct point_light point_lights[ 1 ] =
 		glm::vec3( 1.0f, 1.0f, 1.0f ),  // color
 		0.1f, 0.8f, 0.8f,				// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.09f, 0.032f			// constant_attenuation, linear_attenuation, quadratic_attenuation
+	},
+	// light 1
+	{
+		glm::vec3( 8.0f, 7.0f, 10.0f ),	// position
+		glm::vec3( 1.0f, 0.2f, 0.2f ),  // color
+		0.3f, 0.9f, 0.9f,				// ambient_strength, diffuse_strength, specular_strength
+		1.0f, 0.09f, 0.032f				// constant_attenuation, linear_attenuation, quadratic_attenuation
 	}
 };
 // spot lights:
-int num_spot_lights = 1;
-struct spot_light spot_lights[ 1 ] = 
+int num_spot_lights = 2;
+struct spot_light spot_lights[ 2 ] = 
 {
 	// light 0
 	{
@@ -114,6 +132,16 @@ struct spot_light spot_lights[ 1 ] =
 		glm::cos( glm::radians(8.0f) ),		// dim start angle
 		glm::cos( glm::radians(30.5f) ),	// dim end angle
 		glm::vec3( 1.0f, 1.0f, 1.0f ),		// color
+		0.4f, 0.8f, 0.8f,					// ambient_strength, diffuse_strength, specular_strength
+		1.0f, 0.014f, 0.0007f				// constant_attenuation, linear_attenuation, quadratic_attenuation
+	},
+	// light 1
+	{
+		glm::vec3( 3.0f, 5.5f, 16.0f ),		// position
+		glm::vec3( 0.0f, -1.0f, 0.0f ),		// direction
+		glm::cos( glm::radians(15.0f) ),	// dim start angle
+		glm::cos( glm::radians(18.0f) ),	// dim end angle
+		glm::vec3( 0.2f, 0.2f, 1.0f ),		// color
 		0.4f, 0.8f, 0.8f,					// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.014f, 0.0007f				// constant_attenuation, linear_attenuation, quadratic_attenuation
 	}
@@ -128,7 +156,7 @@ struct directional_light directional_lights[ 1 ] =
 	{
 		glm::vec3( 0.5f, -1.0f, -0.5f ),		// direction
 		glm::vec3( 0.988f, 0.792f, 0.149f ),	// color
-		0.1f, 0.1f, 0.05f,						// ambient_strength, diffuse_strength, specular_strength
+		0.1f, 0.1f, 0.2f,						// ambient_strength, diffuse_strength, specular_strength
 	}
 };
 glm::vec3 sun_position = glm::vec3( -100.0f, 100.0f, 100.0f );
@@ -322,7 +350,7 @@ void display( )
 		camera.shader_id = light_shader.get_program( );
 		camera.use( );
 
-		light_shader.set_uniform3f( Shader::u_all_color_vec3, point_lights[sdx].color.x, point_lights[sdx].color.y, point_lights[sdx].color.z ); 
+		light_shader.set_uniform3f( Shader::u_all_color_vec3, spot_lights[sdx].color.x, spot_lights[sdx].color.y, spot_lights[sdx].color.z ); 
 		glBindVertexArray( vao_box );
 		glDrawArrays( GL_TRIANGLES, 0, 36 );
 	}
