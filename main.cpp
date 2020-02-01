@@ -14,6 +14,7 @@
 #include <camera.h>
 #include <delta_time.h>
 #include <geometry.h>
+#include <textures.h>
 
 #include <glad/glad.h>
 #include <glfw3.h>
@@ -53,6 +54,8 @@
 GLFWInputHandler	input_handler;
 Camera				camera;
 DeltaTime			delta_time( glfwGetTime );
+Texture				noise_tex;
+
 
 // WAVES:
 glm::vec3 wave_dimensions			= glm::vec3( 40.0f, 3.0f, 40.0f );
@@ -318,13 +321,25 @@ int init( )
       glBindBuffer(GL_ARRAY_BUFFER, vbo_box);
         glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
       // position attribute
-      glVertexAttribPointer(Shader::a_pos, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+      glVertexAttribPointer(Shader::a_pos, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
       glEnableVertexAttribArray(Shader::a_pos);
       // normal attribute
-      glVertexAttribPointer(Shader::a_normal, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+      glVertexAttribPointer(Shader::a_normal, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
       glEnableVertexAttribArray(Shader::a_normal);
+	  // texture
+      glVertexAttribPointer(Shader::a_tex_coord, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+      glEnableVertexAttribArray(Shader::a_tex_coord);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// textures
+	noise_tex.set_unit( GL_TEXTURE0 );
+	noise_tex.set_target( GL_TEXTURE_2D );
+	noise_tex.add_parameteri( GL_TEXTURE_WRAP_S, GL_REPEAT );
+	noise_tex.add_parameteri( GL_TEXTURE_WRAP_T, GL_REPEAT );
+	noise_tex.add_parameteri( GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	noise_tex.add_parameteri( GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	noise_tex.load( ASSETS_DIRECTORY"noise.jpg" );
 
 	return 0;
 
@@ -410,7 +425,10 @@ void display( )
 
 	// render waves:
     wave_shader.use( );
-
+	// textures
+	noise_tex.use( );
+	wave_shader.set_uniform1i( TEX_UNIFORM_0, get_tex_unit_num( noise_tex.get_unit( ) ) );
+	// other
 	wave_shader.use_waves( );
 	wave_shader.use_lights( );
 	wave_shader.set_camera_position( camera.pos );

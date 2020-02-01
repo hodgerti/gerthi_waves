@@ -35,13 +35,28 @@ uniform int				u_num_waves;
 uniform wave_info 		u_waves_infos[ NUM_WAVES ];
 uniform float			u_wave_time;
 
+// textures
+uniform sampler2D u_tex_0;  // noise
+
+// noise
+float noise_freq = 1.5;
+float noise_amp = 1.5;
+
 vec3 gerstner_wave( vec3, float );
+vec3 rotate_on_y( float, float, vec3 );
 
 void main()
 {
 	vec3 new_pos = a_pos;
-	vec3 new_normal = a_normal;
 	
+	// normal noise
+	vec3 new_normal = a_normal;
+	vec4 texture_noise = texture2D( u_tex_0, noise_freq * a_tex_coord );
+	float noise_sum_flat = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
+	noise_sum_flat = u_wave_time + ( noise_amp * (noise_sum_flat - 2.0) );
+	new_normal = rotate_on_y( noise_sum_flat, -noise_sum_flat, new_normal );
+
+	// wave height
 	if( a_pos.y >= 0.5f )
 	{	
 		// find wave height:
@@ -64,7 +79,6 @@ void main()
 		v_material_out.specular = vec3( 0.0, 0.0, 0.0 );
 		v_material_out.shininess = 1.0;
 	}
-	
 	
 	// apply position and pipe out
 	v_model_position = new_pos;
@@ -101,4 +115,24 @@ vec3 gerstner_wave( vec3 start_position, float time )
 	}
 	
 	return vec3(x_value, height, z_value);
+}
+
+// rotate a vec3 around y axis
+vec3 rotate_on_y( float pitch_x, float yaw_z, vec3 vector )
+{
+	// go fast
+	float cos_pitch = cos( pitch_x );
+	float sin_pitch = sin( pitch_x );
+	float cos_yaw = cos( yaw_z );
+	float sin_yaw = sin( yaw_z );
+	// apply pitch
+	float new_z = vector.z*cos_pitch - vector.y*sin_pitch;
+	vector.y = vector.z*sin_pitch + vector.y*cos_pitch;
+	vector.z = new_z;
+	// apply yaw
+	float new_x = vector.x*cos_yaw + vector.y*sin_yaw;
+	vector.y = -vector.x*sin_yaw + vector.y*cos_yaw;
+	vector.x = new_x;
+	
+	return normalize( vector );
 }

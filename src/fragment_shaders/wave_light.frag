@@ -16,9 +16,6 @@ in vec2 v_tex_coord;
 // uniforms
 uniform vec3 u_camera_position;
 
-// textures
-uniform sampler2D u_tex_0;
-
 // lights:
 // 10 point lights
 struct point_light 

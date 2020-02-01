@@ -21,6 +21,8 @@ Texture::Texture()
 
 	// default target is 2D
 	target = GL_TEXTURE_2D;
+	// default unit is GL_TEXTURE0
+	unit = GL_TEXTURE0;
 }
 
 Texture::Texture(int targ)
@@ -158,7 +160,6 @@ int Texture::get_target()
 
 int Texture::get_unit()
 {
-	int askdhjaslkdj = get_tex_unit_num(unit);
 	return unit;
 }
 
