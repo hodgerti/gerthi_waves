@@ -19,7 +19,7 @@
 /************************************
 * Definitions
 *************************************/
-#define DFLT_KEYS_SIZE		16
+#define DFLT_KEYS_SIZE		32
 #define NO_KEY_ID			-1
 #define DFLT_MOUSEPOS glm::vec2(0.0, 0.0);
 #define MAX_YAW 

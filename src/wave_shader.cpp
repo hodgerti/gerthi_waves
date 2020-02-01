@@ -512,8 +512,6 @@ void WaveShader::use_waves( )
 			set_uniform1f( buffer, waves_infos[adx]->amplitude );
 			sprintf( buffer, "u_waves_infos[%i].phase_constant\0", use_idx );
 			set_uniform1f( buffer, waves_infos[adx]->phase_constant );
-			sprintf( buffer, "u_waves_infos[%i].roll_constant\0", use_idx );
-			set_uniform1f( buffer, waves_infos[adx]->roll_constant );
 			sprintf( buffer, "u_waves_infos[%i].crest_constant\0", use_idx );
 			set_uniform1f( buffer, waves_infos[adx]->crest_constant );
 			sprintf( buffer, "u_waves_infos[%i].direction\0", use_idx );

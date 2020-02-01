@@ -19,7 +19,7 @@
 #define NUM_POINT_LIGHTS			10
 #define NUM_SPOT_LIGHTS				4
 #define NUM_DIRECTIONAL_LIGHTS		2
-#define NUM_WAVES					3
+#define NUM_WAVES					7
 
 /************************************
 * Types
@@ -71,7 +71,6 @@ struct wave_info
 	float frequency;
 	float amplitude;
 	float phase_constant;
-	float roll_constant;
 	float crest_constant;
 	glm::vec2 direction;
 };

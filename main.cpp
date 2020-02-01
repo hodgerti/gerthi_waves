@@ -22,8 +22,8 @@
 * Definitions
 *************************************/
 #define CONTEXT_TITLE		"LearnOpenGL"
-#define WINDOW_WIDTH		864
-#define WINDOW_HEIGHT		864
+#define WINDOW_WIDTH		1024
+#define WINDOW_HEIGHT		1024
 
 /************************************
 * Defines
@@ -55,37 +55,67 @@ Camera				camera;
 DeltaTime			delta_time( glfwGetTime );
 
 // WAVES:
-glm::vec3 wave_dimensions			= glm::vec3( 20.0f, 3.0f, 20.0f );
-int									wave_xoops = 100, wave_yoops = 0, wave_zoops = 100;
-int num_waves = 3;
-struct wave_info waves_infos[ 3 ] = 
+glm::vec3 wave_dimensions			= glm::vec3( 40.0f, 3.0f, 40.0f );
+int									wave_xoops = 1000, wave_yoops = 0, wave_zoops = 1000;
+int num_waves = NUM_WAVES;
+int current_wave = 0;
+struct wave_info waves_infos[ NUM_WAVES ] = 
 {
 	// wave 0 (big)
 	{
-		1.85f,	// frequency
-		0.24f,	// amplitude
-		2.6f,	// phase constant (speed)
-		2.5f,	// roll constant
-		0.5f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
+		0.135502f,	// frequency
+		1.617319f,	// amplitude
+		1.079493f,	// phase constant (speed)
+		0.385999f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
 		glm::vec2( 0.8f, 0.2f )	// direction
 	},
 	// wave 1 (small)
 	{
-		2.9f,	// frequency
-		0.1f,	// amplitude
-		6.0f,	// phase constant (speed)
-		0.5f,	// roll constant
-		0.5f,	// crest constant
-		glm::vec2( -0.2f, 0.9f )	// direction
+		0.326000f,	// frequency
+		0.888002f,	// amplitude
+		0.105000f,	// phase constant (speed)
+		0.108000f,	// crest constant
+		glm::vec2( 0.75f, 0.25f )	// direction
 	},
 	// wave 2 (very cool)
 	{
-		6.4,	// frequency
-		0.12f,	// amplitude
-		1.2f,	// phase constant (speed)
-		3.6f,	// roll constant
-		0.34f,	// crest constant
-		glm::vec2( -0.9f, -0.4f )	// direction
+		1.770008f,	// frequency
+		0.125400f,	// amplitude
+		0.792002f,	// phase constant (speed)
+		1.212008f,	// crest constant
+		glm::vec2( -0.161228f, 0.808723f )	// direction
+	},
+	// wave 3 (crashing)
+	{
+		0.056203f,	// frequency
+		0.078200f,	// amplitude
+		5.025150f,	// phase constant (speed)
+		7.393781f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
+		glm::vec2( 0.464056f, -0.681703f )	// direction
+	},
+	// wave 4
+	{
+		0.000799f,	// frequency
+		0.108000f,	// amplitude
+		2.397013f,	// phase constant (speed)
+		0.052800f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
+		glm::vec2( 0.499604f, 0.656083f )	// direction
+	},
+	// wave 5
+	{
+		0.0f,	// frequency
+		0.0f,	// amplitude
+		0.0f,	// phase constant (speed)
+		0.0f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
+		glm::vec2( 0.8f, 0.2f )	// direction
+	},
+	// wave 6
+	{
+		0.0f,	// frequency
+		0.0f,	// amplitude
+		0.0f,	// phase constant (speed)
+		0.0f,	// crest constant ( 0.0 -> 1.0/(frequency*amplitude) )
+		glm::vec2( 0.8f, 0.2f )	// direction
 	}
 };
 
@@ -174,6 +204,10 @@ void		generate_rectangluar_prism( GLuint * , GLuint * , GLfloat ** , GLuint ** ,
 void		generate_rectangle( GLuint * , GLuint * , GLfloat ** , GLuint ** , float , float , int , int );
 float		angle_between( glm::vec3, glm::vec3, glm::vec3 = glm::vec3(0.0f, 0.0f, 0.0f)) ;
 glm::mat4	rotate_to_direction( glm::mat4, glm::vec3 );
+void		mod_wave( struct wave_info **, float , float , float , float , glm::vec2 );
+void		print_wave( struct wave_info * );
+glm::vec2	rotate( glm::vec2, float );
+
 
 int main( )
 {
@@ -189,17 +223,23 @@ int init( )
 	
 	// setup HIDs
 	input_handler.add_key(GLFW_KEY_ESCAPE, GLFW_KEY_ESCAPE);
-	input_handler.add_key(GLFW_KEY_P, GLFW_KEY_P);
+	input_handler.add_key(GLFW_KEY_LEFT_SHIFT, GLFW_KEY_LEFT_SHIFT);
 	input_handler.add_key(GLFW_KEY_W, GLFW_KEY_W);
 	input_handler.add_key(GLFW_KEY_A, GLFW_KEY_A);
 	input_handler.add_key(GLFW_KEY_S, GLFW_KEY_S);
 	input_handler.add_key(GLFW_KEY_D, GLFW_KEY_D);
-	input_handler.add_key(GLFW_KEY_UP, GLFW_KEY_UP);
-	input_handler.add_key(GLFW_KEY_DOWN, GLFW_KEY_DOWN);
-	input_handler.add_key(GLFW_KEY_V, GLFW_KEY_V);
-	input_handler.add_key(GLFW_KEY_B, GLFW_KEY_B);
-	input_handler.add_key(GLFW_KEY_N, GLFW_KEY_N);
+	input_handler.add_key(GLFW_KEY_Q, GLFW_KEY_Q);
+	input_handler.add_key(GLFW_KEY_T, GLFW_KEY_T);
+	input_handler.add_key(GLFW_KEY_G, GLFW_KEY_G);
+	input_handler.add_key(GLFW_KEY_Y, GLFW_KEY_Y);
+	input_handler.add_key(GLFW_KEY_H, GLFW_KEY_H);
+	input_handler.add_key(GLFW_KEY_U, GLFW_KEY_U);
+	input_handler.add_key(GLFW_KEY_J, GLFW_KEY_J);
+	input_handler.add_key(GLFW_KEY_I, GLFW_KEY_I);
+	input_handler.add_key(GLFW_KEY_K, GLFW_KEY_K);
 	input_handler.add_key(GLFW_KEY_M, GLFW_KEY_M);
+	input_handler.add_key(GLFW_KEY_O, GLFW_KEY_O);
+	input_handler.add_key(GLFW_KEY_L, GLFW_KEY_L);
 
 	input_handler.start_mouse();
 	
@@ -398,10 +438,6 @@ void process_inputs( )
 	{
 		glfwSetWindowShouldClose(input_handler.window, true);
 	}
-	if(input_handler.get_clicks(GLFW_KEY_P) > 4)
-	{
-		glfwSetWindowShouldClose(input_handler.window, true);
-	}
 
 	if(input_handler.check_pressed(GLFW_KEY_W))
 	{
@@ -419,15 +455,66 @@ void process_inputs( )
 	{
 		camera.move_right( delta_time.delta );
 	}
-	if(input_handler.pop_click(GLFW_KEY_UP))
+
+	struct wave_info *wave = &waves_infos[current_wave];
+	// speed
+	float adj_speed = 0.0001f;
+	if(input_handler.check_pressed(GLFW_KEY_LEFT_SHIFT))
 	{
-		camera.move_speed	+= DFLT_MOVE_SPEED_INCR;
-		camera.strafe_speed += DFLT_STRAFE_SPEED_INCR;
+		adj_speed = 0.003f;
 	}
-	if(input_handler.pop_click(GLFW_KEY_DOWN))
+	// freq
+	if(input_handler.check_pressed(GLFW_KEY_T))
 	{
-		camera.move_speed	-= DFLT_MOVE_SPEED_INCR;
-		camera.strafe_speed -= DFLT_STRAFE_SPEED_INCR;
+		mod_wave( &wave, wave->frequency + adj_speed, wave->amplitude, wave->phase_constant, wave->crest_constant, wave->direction );
+	}
+	if(input_handler.check_pressed(GLFW_KEY_G))
+	{
+		mod_wave( &wave, wave->frequency - adj_speed, wave->amplitude, wave->phase_constant, wave->crest_constant, wave->direction );
+	}
+	// amp
+	if(input_handler.check_pressed(GLFW_KEY_Y))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude + adj_speed, wave->phase_constant, wave->crest_constant, wave->direction );
+	}
+	if(input_handler.check_pressed(GLFW_KEY_H))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude - adj_speed, wave->phase_constant, wave->crest_constant, wave->direction );
+	}
+	// phase
+	if(input_handler.check_pressed(GLFW_KEY_U))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude, wave->phase_constant + adj_speed, wave->crest_constant, wave->direction );
+	}
+	if(input_handler.check_pressed(GLFW_KEY_J))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude, wave->phase_constant - adj_speed, wave->crest_constant, wave->direction );
+	}
+	// crest
+	if(input_handler.check_pressed(GLFW_KEY_I))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude, wave->phase_constant, wave->crest_constant + adj_speed, wave->direction );
+	}
+	if(input_handler.check_pressed(GLFW_KEY_K))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude, wave->phase_constant, wave->crest_constant - adj_speed, wave->direction );
+	}
+	// rotate
+	if(input_handler.check_pressed(GLFW_KEY_O))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude, wave->phase_constant, wave->crest_constant, rotate( wave->direction, adj_speed ) );
+	}
+	if(input_handler.check_pressed(GLFW_KEY_L))
+	{
+		mod_wave( &wave, wave->frequency, wave->amplitude, wave->phase_constant, wave->crest_constant, rotate( wave->direction, -adj_speed ) );
+	}
+
+	// change wave
+	if(input_handler.pop_click(GLFW_KEY_Q))
+	{
+		current_wave++;
+		current_wave %= NUM_WAVES;
+		print_wave( wave );
 	}
 
 	if(input_handler.pop_click(GLFW_KEY_M))
@@ -635,4 +722,32 @@ glm::mat4 rotate_to_direction( glm::mat4 matrix, glm::vec3 direction )
 	glm::mat4 rotate_xy = glm::rotate( matrix, angle, glm::vec3( 0.0f, 0.0f, 1.0f ) );
 	float z_angle = -std::asin( direction.z );
 	return glm::rotate( rotate_xy, z_angle, glm::vec3( 0.0f, 1.0f, 0.0f ) );
+}
+
+void mod_wave( struct wave_info **wave, float freq, float amp, float phi, float qi, glm::vec2 direction )
+{
+	(*wave)->frequency = max( freq, 0.0f );
+	(*wave)->amplitude = max( amp, 0.0f );
+	(*wave)->phase_constant = max( phi, 0.0f );
+	(*wave)->crest_constant = clamp( qi, 0.0f, 1.0f/((*wave)->frequency*(*wave)->amplitude));
+	(*wave)->direction = direction;
+	print_wave( (*wave) );
+}
+
+void print_wave( struct wave_info *wave )
+{
+	printf( "CURRENT WAVE: %i\n", current_wave );
+	printf( "FREQUENCY: %f\n", wave->frequency );
+	printf( "AMPLITUDE: %f\n", wave->amplitude );
+	printf( "PHASE CONSTANT: %f\n", wave->phase_constant );
+	printf( "CREST CONSTANT: %f\n", wave->crest_constant );
+	printf( "DIRECTION: < %f, %f >\n\n", wave->direction.x, wave->direction.y );
+}
+
+glm::vec2 rotate( glm::vec2 v_in, float rads )
+{
+	glm::mat4 mat = glm::mat4(1.0f);
+	mat = glm::rotate( mat, rads, glm::vec3(0.0f, 0.0f, 1.0f) );
+	glm::vec4 result = mat * glm::vec4( v_in.x, v_in.y, 1.0f, 1.0f );
+	return glm::vec2( result.x, result.y );
 }

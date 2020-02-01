@@ -116,8 +116,13 @@ vec3 calculate_point_light( point_light light )
 	vec3 diffuse = ( diffuse_strength * v_material_in.diffuse ) * ( light.color * light.diffuse_strength ) * attenuation;
 	
 	// specular
-	float specular_amount = pow( max( dot( reflect_direction, view_direction ), 0.0 ), v_material_in.shininess );
-	vec3 specular = ( specular_amount * v_material_in.specular ) * ( light.color * light.specular_strength ) * attenuation;
+	vec3 specular = vec3(0.0);
+	float phi = dot( reflect_direction, view_direction );
+	if( phi > 0.0 )
+	{
+		float specular_amount = pow( max( phi, 0.0 ), v_material_in.shininess );
+		specular = ( specular_amount * v_material_in.specular ) * ( light.color * light.specular_strength ) * attenuation;
+	}
 	
 	return ambient + diffuse + specular;
 }
@@ -160,8 +165,13 @@ vec3 calculate_spot_light( spot_light light )
 		vec3 diffuse = ( diffuse_strength * v_material_in.diffuse ) * ( light.color * light.diffuse_strength ) * attenuation;
 		
 		// specular
-		float specular_amount = pow( max( dot( reflect_direction, view_direction ), 0.0 ), v_material_in.shininess );
-		vec3 specular = ( specular_amount * v_material_in.specular ) * ( light.color * light.specular_strength ) * attenuation;
+		vec3 specular = vec3(0.0);
+		float phi = dot( reflect_direction, view_direction );
+		if( phi > 0.0 )
+		{
+			float specular_amount = pow( max( phi, 0.0 ), v_material_in.shininess );
+			specular = ( specular_amount * v_material_in.specular ) * ( light.color * light.specular_strength ) * attenuation;
+		}
 		
 		return ambient + diffuse + specular;
 	}
@@ -187,8 +197,13 @@ vec3 calculate_directional_light( directional_light light )
 	vec3 diffuse = ( diffuse_strength * v_material_in.diffuse ) * ( light.color * light.diffuse_strength );
 	
 	// specular
-	float specular_amount = pow( max( dot( reflect_direction, view_direction ), 0.0 ), v_material_in.shininess );
-	vec3 specular = ( specular_amount * v_material_in.specular ) * ( light.color * light.specular_strength );
+	vec3 specular = vec3(0.0);
+	float phi = dot( reflect_direction, view_direction );
+	if( phi > 0.0 )
+	{
+		float specular_amount = pow( max( phi, 0.0 ), v_material_in.shininess );
+		specular = ( specular_amount * v_material_in.specular ) * ( light.color * light.specular_strength );
+	}
 	
 	return ambient + diffuse + specular;
 	

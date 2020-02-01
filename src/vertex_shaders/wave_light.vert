@@ -27,38 +27,15 @@ struct wave_info
 	float frequency;
 	float amplitude;
 	float phase_constant;
-	float roll_constant;
 	float crest_constant;
 	vec2 direction;
 };
-#define NUM_WAVES		3
+#define NUM_WAVES		64
 uniform int				u_num_waves;
 uniform wave_info 		u_waves_infos[ NUM_WAVES ];
 uniform float			u_wave_time;
 
-vec3 gerstner_wave( vec3 start_position, float time )
-{
-	vec2 position = vec2(start_position.x, start_position.z);
-	
-	float x_value = start_position.x;
-	for( int wdx = 0; wdx < u_num_waves; wdx++ )
-	{
-		x_value += u_waves_infos[wdx].crest_constant*u_waves_infos[wdx].amplitude * u_waves_infos[wdx].direction.x*cos(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
-	}
-	float z_value = start_position.z;
-	for( int wdx = 0; wdx < u_num_waves; wdx++ )
-	{
-		z_value += u_waves_infos[wdx].crest_constant*u_waves_infos[wdx].amplitude * u_waves_infos[wdx].direction.y*cos(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
-	}
-	float height = start_position.y;
-	for( int wdx = 0; wdx < u_num_waves; wdx++ )
-	{
-		height += u_waves_infos[wdx].amplitude*sin(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
-	}
-	
-	return vec3(x_value, height, z_value);
-	
-}
+vec3 gerstner_wave( vec3, float );
 
 void main()
 {
@@ -100,5 +77,28 @@ void main()
 	// pipe out texture coords
 	v_tex_coord = a_tex_coord;
 	
+}
+
+
+vec3 gerstner_wave( vec3 start_position, float time )
+{
+	vec2 position = vec2(start_position.x, start_position.z);
 	
+	float x_value = start_position.x;
+	for( int wdx = 0; wdx < u_num_waves; wdx++ )
+	{
+		x_value += u_waves_infos[wdx].crest_constant*u_waves_infos[wdx].amplitude * u_waves_infos[wdx].direction.x*cos(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
+	}
+	float z_value = start_position.z;
+	for( int wdx = 0; wdx < u_num_waves; wdx++ )
+	{
+		z_value += u_waves_infos[wdx].crest_constant*u_waves_infos[wdx].amplitude * u_waves_infos[wdx].direction.y*cos(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
+	}
+	float height = start_position.y;
+	for( int wdx = 0; wdx < u_num_waves; wdx++ )
+	{
+		height += u_waves_infos[wdx].amplitude*sin(dot(u_waves_infos[wdx].frequency*u_waves_infos[wdx].direction, position) + u_waves_infos[wdx].phase_constant*time);
+	}
+	
+	return vec3(x_value, height, z_value);
 }
