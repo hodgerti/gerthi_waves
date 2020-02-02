@@ -15,6 +15,8 @@ const GLchar * WaveShader::u_all_color_vec3					= "u_all_color";
 const GLchar * WaveShader::u_num_waves						= "u_num_waves";
 const GLchar * WaveShader::u_wave_time_float				= "u_wave_time";
 const GLchar * WaveShader::u_camera_position_vec3			= "u_camera_position";
+const GLchar * WaveShader::u_wave_start_float				= "u_wave_start";
+const GLchar * WaveShader::u_viewing_mode_bool				= "u_viewing_mode";
 
 
 const GLchar * WaveShader::u_texture0_int			= "u_tex_0";
@@ -45,6 +47,9 @@ WaveShader::WaveShader()
 	{
 		waves_infos[ wdx ] = 0;
 	}
+
+	viewing_mode = false;
+	wave_start = 0.0f;
 }
 
 WaveShader::WaveShader(const char* vertex_path, const char* fragment_path)
@@ -412,7 +417,7 @@ glm::vec3 WaveShader::get_spot_light_color( struct spot_light * light )
 // This is a bad function that uses way to much memory DO NOT compile it! :)
 void WaveShader::use_lights( )
 {
-	char buffer[100];
+	char buffer[255];
 
 	// point lights:
 	int use_idx = 0;
@@ -498,7 +503,7 @@ void WaveShader::use_lights( )
 
 void WaveShader::use_waves( )
 {
-	char buffer[100];
+	char buffer[255];
 
 	// point lights:
 	int use_idx = 0;
@@ -520,6 +525,28 @@ void WaveShader::use_waves( )
 		}
 	}
 	set_uniform1i( WaveShader::u_num_waves, use_idx );
+	set_uniform1f( WaveShader::u_wave_start_float, wave_start );
+	set_uniform1b( WaveShader::u_viewing_mode_bool, viewing_mode );
+}
+
+void WaveShader::toggle_viewing_mode( )
+{
+	viewing_mode = !viewing_mode;
+}
+
+bool WaveShader::get_viewing_mode( )
+{
+	return viewing_mode;
+}
+
+void WaveShader::set_wave_start( float new_start )
+{
+	wave_start = new_start;
+}
+
+float WaveShader::get_wave_start( )
+{
+	return wave_start;
 }
 
 void WaveShader::use()
@@ -566,4 +593,8 @@ void WaveShader::set_uniform4f(const char* name, float x, float y, float z, floa
 void WaveShader::set_uniform1i(const char* name, int x) const
 {
 	glUniform1i(glGetUniformLocation(program, name), x);
+}
+void WaveShader::set_uniform1b(const char* name, bool x) const
+{
+	glUniform1ui(glGetUniformLocation(program, name), x);
 }

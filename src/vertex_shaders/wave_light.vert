@@ -34,6 +34,7 @@ struct wave_info
 uniform int				u_num_waves;
 uniform wave_info 		u_waves_infos[ NUM_WAVES ];
 uniform float			u_wave_time;
+uniform float			u_wave_start;
 
 // textures
 uniform sampler2D u_tex_0;  // noise
@@ -47,20 +48,27 @@ vec3 rotate_on_y( float, float, vec3 );
 
 void main()
 {
+	
+	// noise
+	vec3 new_normal = a_normal;
 	vec3 new_pos = a_pos;
 	
-	// normal noise
-	vec3 new_normal = a_normal;
-	vec4 texture_noise = texture2D( u_tex_0, noise_freq * a_tex_coord );
-	float noise_sum_flat = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
-	noise_sum_flat = u_wave_time + ( noise_amp * (noise_sum_flat - 2.0) );
-	new_normal = rotate_on_y( noise_sum_flat, -noise_sum_flat, new_normal );
-
 	// wave height
-	if( a_pos.y >= 0.5f )
+	if( new_pos.y >= u_wave_start )
 	{	
+		// noise
+		vec4 texture_noise = texture2D( u_tex_0, noise_freq * a_tex_coord );
+		
+		// normal noise
+		float noise_sum_flat = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
+		noise_sum_flat = u_wave_time + ( noise_amp * (noise_sum_flat - 2.0) );
+		new_normal = rotate_on_y( noise_sum_flat, -noise_sum_flat, new_normal );
+		
+		// normal displacement
+		new_pos += new_normal*noise_amp;
+	
 		// find wave height:
-		new_pos = gerstner_wave( a_pos, u_wave_time );
+		new_pos = gerstner_wave( new_pos, u_wave_time );
 		// vec3 binormal = vec3(1.0, dFdx_all(flat_pos, u_wave_time), 0.0);  // for x
 		// vec3 tangent = vec3(0.0, dFdy_all(flat_pos, u_wave_time), 1.0);  // for z
 		// new_normal = cross(binormal, tangent);

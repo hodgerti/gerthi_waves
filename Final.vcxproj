@@ -79,6 +79,11 @@
     <IntDir>$(SolutionDir)Debug\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Release\</OutDir>
+    <IntDir>$(SolutionDir)Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -138,11 +143,17 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)src\;$(SolutionDir)include\;$(SolutionDir)glfw\include\;$(SolutionDir)stb\;$(SolutionDir)glad\include\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASSETS_DIRECTORY="$(SolutionDir.Replace('\', '/'))assets/";SHADER_DEBUG_FILE_LOCATION="$(SolutionDir.Replace('\', '/'))logs/shader_debug.txt";VERT_SHADERS="$(SolutionDir.Replace('\', '/'))src/vertex_shaders/";FRAG_SHADERS="$(SolutionDir.Replace('\', '/'))src/fragment_shaders/";WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(SolutionDir)Release\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)glfw\lib\;$(SolutionDir)lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

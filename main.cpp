@@ -58,6 +58,7 @@ Texture				noise_tex;
 
 
 // WAVES:
+#define WAVE_START 0.5f
 glm::vec3 wave_dimensions			= glm::vec3( 40.0f, 3.0f, 40.0f );
 int									wave_xoops = 1000, wave_yoops = 0, wave_zoops = 1000;
 int num_waves = NUM_WAVES;
@@ -243,6 +244,7 @@ int init( )
 	input_handler.add_key(GLFW_KEY_M, GLFW_KEY_M);
 	input_handler.add_key(GLFW_KEY_O, GLFW_KEY_O);
 	input_handler.add_key(GLFW_KEY_L, GLFW_KEY_L);
+	input_handler.add_key(GLFW_KEY_P, GLFW_KEY_P);
 
 	input_handler.start_mouse();
 	
@@ -429,6 +431,7 @@ void display( )
 	noise_tex.use( );
 	wave_shader.set_uniform1i( TEX_UNIFORM_0, get_tex_unit_num( noise_tex.get_unit( ) ) );
 	// other
+	wave_shader.set_wave_start( WAVE_START );
 	wave_shader.use_waves( );
 	wave_shader.use_lights( );
 	wave_shader.set_camera_position( camera.pos );
@@ -533,6 +536,12 @@ void process_inputs( )
 		current_wave++;
 		current_wave %= NUM_WAVES;
 		print_wave( wave );
+	}
+
+	// change viewing mode
+	if(input_handler.pop_click(GLFW_KEY_P))
+	{
+		wave_shader.toggle_viewing_mode( );
 	}
 
 	if(input_handler.pop_click(GLFW_KEY_M))

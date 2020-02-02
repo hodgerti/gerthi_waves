@@ -16,6 +16,12 @@ in vec2 v_tex_coord;
 // uniforms
 uniform vec3 u_camera_position;
 
+// textures
+uniform sampler2D u_tex_0;  // noise
+
+// view as noise texture
+uniform bool u_viewing_mode;
+
 // lights:
 // 10 point lights
 struct point_light 
@@ -75,6 +81,12 @@ vec3 calculate_directional_light( directional_light );
 
 void main()
 {
+	if( u_viewing_mode )
+	{
+		gl_FragColor = texture2D( u_tex_0, v_tex_coord );
+		return;
+	}
+
 	vec3 result = vec3( 0.0, 0.0, 0.0 );
 	
 	for( int pdx = 0; pdx < u_num_point_lights; pdx++ )

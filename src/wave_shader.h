@@ -99,6 +99,9 @@ class WaveShader
 
 		glm::vec3 camera_position;
 
+		float wave_start;
+		bool viewing_mode; 
+
 	public:
 		// static members:
 		static const GLchar *u_model_mat4;		
@@ -110,6 +113,8 @@ class WaveShader
 		static const GLchar *u_num_waves;
 		static const GLchar *u_wave_time_float;
 		static const GLchar *u_camera_position_vec3;
+		static const GLchar *u_wave_start_float;
+		static const GLchar *u_viewing_mode_bool;
 
 		static const GLchar *u_texture0_int;
 
@@ -132,6 +137,12 @@ class WaveShader
 		int	num_spot_lights = 0;
 		int	num_directional_lights = 0;
 		int num_waves = 0;
+
+		void toggle_viewing_mode( );
+		bool get_viewing_mode( );
+
+		void set_wave_start( float );
+		float get_wave_start( );
 
 		// user fills out own struct
 		// shader keeps track of it and uses info in it to do everything
@@ -162,11 +173,12 @@ class WaveShader
 		unsigned int get_frag();
 		unsigned int get_program();
 
-		void set_uniform1f(const char* name, float x) const;
-		void set_uniform2f(const char* name, float x, float y) const;
-		void set_uniform3f(const char* name, float x, float y, float z) const;
-		void set_uniform4f(const char* name, float x, float y, float z, float w) const;
-		void set_uniform1i(const char* name, int x) const;
+		void set_uniform1f(const char*, float) const;
+		void set_uniform2f(const char*, float, float) const;
+		void set_uniform3f(const char*, float, float, float) const;
+		void set_uniform4f(const char*, float, float, float, float) const;
+		void set_uniform1i(const char*, int) const;
+		void set_uniform1b(const char*, bool) const;
 
 };
 
