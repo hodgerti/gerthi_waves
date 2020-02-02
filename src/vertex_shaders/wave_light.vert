@@ -40,8 +40,9 @@ uniform float			u_wave_start;
 uniform sampler2D u_tex_0;  // noise
 
 // noise
-float noise_freq = 1.5;
-float noise_amp = 1.5;
+float noise_freq = 2.5;
+float noise_amp = 0.8;
+float noise_normal_amp = 0.3;
 
 vec3 gerstner_wave( vec3, float );
 vec3 rotate_on_y( float, float, vec3 );
@@ -65,7 +66,7 @@ void main()
 		new_normal = rotate_on_y( noise_sum_flat, -noise_sum_flat, new_normal );
 		
 		// normal displacement
-		new_pos += new_normal*noise_amp;
+		new_pos += new_normal*noise_normal_amp;
 	
 		// find wave height:
 		new_pos = gerstner_wave( new_pos, u_wave_time );

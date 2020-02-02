@@ -137,8 +137,9 @@ glm::vec4 NIGHT_BACKCOLOR = DAY_BACKCOLOR / 3.0f;
 
 // LIGHTS:
 // point lights:
-int num_point_lights = 2;
-struct point_light point_lights[ 2 ] = 
+#define NUM_POINT_LIGHTS 4
+int num_point_lights = NUM_POINT_LIGHTS;
+struct point_light point_lights[ NUM_POINT_LIGHTS ] = 
 {
 	// light 0
 	{
@@ -153,6 +154,20 @@ struct point_light point_lights[ 2 ] =
 		glm::vec3( 1.0f, 0.2f, 0.2f ),  // color
 		0.3f, 0.9f, 0.9f,				// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.09f, 0.032f				// constant_attenuation, linear_attenuation, quadratic_attenuation
+	},
+	// light 2
+	{
+		glm::vec3( 30.0f, 7.0f, 30.0f ),	// position
+		glm::vec3( 1.0f, 1.0f, 1.0f ),		// color
+		0.3f, 0.9f, 0.9f,					// ambient_strength, diffuse_strength, specular_strength
+		1.0f, 0.07f, 0.017f				// constant_attenuation, linear_attenuation, quadratic_attenuation
+	},
+	// light 3
+	{
+		glm::vec3( 35.0f, 6.0f, 5.0f ),		// position
+		glm::vec3( 1.0f, 1.0f, 1.0f ),		// color
+		0.3f, 0.9f, 0.9f,					// ambient_strength, diffuse_strength, specular_strength
+		1.0f, 0.07f, 0.017f				// constant_attenuation, linear_attenuation, quadratic_attenuation
 	}
 };
 // spot lights:
