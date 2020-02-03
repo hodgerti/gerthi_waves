@@ -99,8 +99,12 @@ class WaveShader
 
 		glm::vec3 camera_position;
 
+		// misc uniforms
 		float wave_start;
 		bool viewing_mode; 
+		float noise_freq = 2.5f;
+		float noise_amp = 0.8f;
+		float noise_normal_amp = 0.3f;
 
 	public:
 		// static members:
@@ -115,6 +119,9 @@ class WaveShader
 		static const GLchar *u_camera_position_vec3;
 		static const GLchar *u_wave_start_float;
 		static const GLchar *u_viewing_mode_bool;
+		static const GLchar *u_noise_freq_float;
+		static const GLchar *u_noise_amp_float;
+		static const GLchar *u_noise_normal_amp_float;
 
 		static const GLchar *u_texture0_int;
 

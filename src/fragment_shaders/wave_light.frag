@@ -16,13 +16,30 @@ in float v_noise_0_1;
 
 // uniforms
 uniform vec3 u_camera_position;
-uniform float u_wave_start;
 
-// textures
-uniform sampler2D u_tex_0;  // noise
+// noise
+uniform sampler2D u_tex_0;
+uniform float u_noise_freq;
+uniform float u_noise_amp;
 
 // view as noise texture
 uniform bool u_viewing_mode;
+
+// waves
+struct wave_info
+{
+	float frequency;
+	float amplitude;
+	float phase_constant;
+	float crest_constant;
+	vec2 direction;
+};
+#define NUM_WAVES		64
+uniform int				u_num_waves;
+uniform wave_info 		u_waves_infos[ NUM_WAVES ];
+uniform float			u_wave_time;
+uniform float			u_wave_start;
+
 
 // lights:
 // 10 point lights
@@ -88,9 +105,12 @@ void main()
 {
 	if( v_model_position.y >= u_wave_start )
 	{	
+		float noise_speed = float(u_wave_time) * u_waves_infos[0].frequency/6.283;  // key off first wave which is assumed to be the trendsetter
+		vec4 texture_noise = texture2D( u_tex_0, u_noise_freq * vec2(noise_speed+v_tex_coord.x, v_tex_coord.y) );
+		
 		if( u_viewing_mode )
 		{
-			gl_FragColor = texture2D( u_tex_0, v_tex_coord );
+			gl_FragColor = texture_noise;
 			return;
 		}
 
@@ -112,10 +132,9 @@ void main()
 		gl_FragColor = vec4( result, 1.0 );
 		
 		// color noise
-		vec4 texture_noise = texture2D( u_tex_0, v_tex_coord );
 		float noise_sum = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
 		noise_sum = (noise_sum-1.0)/2.0;
-		float blend_distance = smoothstep( 0.93, 1.75, noise_sum );
+		float blend_distance = smoothstep( 0.94, 2.5, noise_sum );
 		gl_FragColor = mix( gl_FragColor, WHITE, blend_distance );
 		
 	}
@@ -124,7 +143,6 @@ void main()
 		gl_FragColor = vec4(0.0);
 	}
 } 
-
 
 vec4 saturate( vec4 in_col, float amnt )
 {

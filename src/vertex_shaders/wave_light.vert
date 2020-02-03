@@ -40,9 +40,9 @@ uniform float			u_wave_start;
 uniform sampler2D u_tex_0;  // noise
 
 // noise
-float noise_freq = 2.5;
-float noise_amp = 0.8;
-float noise_normal_amp = 0.3;
+uniform float u_noise_freq;
+uniform float u_noise_amp;
+uniform float u_noise_normal_amp;
 
 vec3 gerstner_wave( vec3, float );
 vec3 gerstner_wave_normal( vec3, float );
@@ -63,15 +63,16 @@ void main()
 		new_normal = gerstner_wave_normal( new_pos, u_wave_time );
 		
 		// noise
-		vec4 texture_noise = texture2D( u_tex_0, noise_freq * a_tex_coord );
+		float noise_speed = float(u_wave_time) * u_waves_infos[0].frequency/6.283;  // key off first wave which is assumed to be the trendsetter
+		vec4 texture_noise = texture2D( u_tex_0, u_noise_freq * vec2(noise_speed+a_tex_coord.x, a_tex_coord.y) );
 		
 		// normal noise
 		float noise_sum_flat = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
-		float noise_sum_n1_1 = float(u_wave_time) + ( noise_amp * (noise_sum_flat-2.0) );
+		float noise_sum_n1_1 = float(u_wave_time)/1.5 + ( u_noise_amp * (noise_sum_flat-2.0) );
 		new_normal = rotate_on_y( -noise_sum_n1_1, noise_sum_n1_1, new_normal );
 		
 		// normal displacement
-		new_pos += new_normal*noise_normal_amp;
+		new_pos += new_normal*u_noise_normal_amp;
 		
 		// find wave color
 		v_material_out.ambient = vec3( 0.01, 0.1, 0.06 );

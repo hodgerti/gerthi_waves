@@ -17,6 +17,9 @@ const GLchar * WaveShader::u_wave_time_float				= "u_wave_time";
 const GLchar * WaveShader::u_camera_position_vec3			= "u_camera_position";
 const GLchar * WaveShader::u_wave_start_float				= "u_wave_start";
 const GLchar * WaveShader::u_viewing_mode_bool				= "u_viewing_mode";
+const GLchar * WaveShader::u_noise_freq_float				= "u_noise_freq";
+const GLchar * WaveShader::u_noise_amp_float				= "u_noise_amp";
+const GLchar * WaveShader::u_noise_normal_amp_float			= "u_noise_normal_amp";
 
 
 const GLchar * WaveShader::u_texture0_int			= "u_tex_0";
@@ -527,6 +530,9 @@ void WaveShader::use_waves( )
 	set_uniform1i( WaveShader::u_num_waves, use_idx );
 	set_uniform1f( WaveShader::u_wave_start_float, wave_start );
 	set_uniform1b( WaveShader::u_viewing_mode_bool, viewing_mode );
+	set_uniform1f( WaveShader::u_noise_freq_float, noise_freq );
+	set_uniform1f( WaveShader::u_noise_amp_float, noise_amp );
+	set_uniform1f( WaveShader::u_noise_normal_amp_float, noise_normal_amp );
 }
 
 void WaveShader::toggle_viewing_mode( )
