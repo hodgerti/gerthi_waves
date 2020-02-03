@@ -12,9 +12,11 @@ in vec3 v_model_position;
 in vec3 v_world_position;
 in vec3 v_normal;
 in vec2 v_tex_coord;
+in float v_noise_0_1;
 
 // uniforms
 uniform vec3 u_camera_position;
+uniform float u_wave_start;
 
 // textures
 uniform sampler2D u_tex_0;  // noise
@@ -75,35 +77,62 @@ uniform point_light 		u_point_lights[ NUM_POINT_LIGHTS ];
 uniform spot_light 			u_spot_lights[ NUM_SPOT_LIGHTS ];
 uniform directional_light 	u_directional_lights[ NUM_DIRECTIONAL_LIGHTS ];
 
+vec4 saturate( vec4, float );
 vec3 calculate_point_light( point_light );
 vec3 calculate_spot_light( spot_light );
 vec3 calculate_directional_light( directional_light );
 
+const vec4 WHITE = vec4( 1.0, 1.0, 1.0, 1.0 );
+
 void main()
 {
-	if( u_viewing_mode )
-	{
-		gl_FragColor = texture2D( u_tex_0, v_tex_coord );
-		return;
-	}
+	if( v_model_position.y >= u_wave_start )
+	{	
+		if( u_viewing_mode )
+		{
+			gl_FragColor = texture2D( u_tex_0, v_tex_coord );
+			return;
+		}
 
-	vec3 result = vec3( 0.0, 0.0, 0.0 );
+		vec3 result = vec3( 0.0, 0.0, 0.0 );
+		
+		for( int pdx = 0; pdx < u_num_point_lights; pdx++ )
+		{
+			result += calculate_point_light( u_point_lights[ pdx ] );
+		}
+		for( int sdx = 0; sdx < u_num_spot_lights; sdx++ )
+		{
+			result += calculate_spot_light( u_spot_lights[ sdx ] );
+		}
+		for( int ddx = 0; ddx < u_num_directional_lights; ddx++ )
+		{
+			result += calculate_directional_light( u_directional_lights[ ddx ] );
+		}
 	
-	for( int pdx = 0; pdx < u_num_point_lights; pdx++ )
-	{
-		result += calculate_point_light( u_point_lights[ pdx ] );
+		gl_FragColor = vec4( result, 1.0 );
+		
+		// color noise
+		vec4 texture_noise = texture2D( u_tex_0, v_tex_coord );
+		float noise_sum = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
+		noise_sum = (noise_sum-1.0)/2.0;
+		float blend_distance = smoothstep( 0.93, 1.75, noise_sum );
+		gl_FragColor = mix( gl_FragColor, WHITE, blend_distance );
+		
 	}
-	for( int sdx = 0; sdx < u_num_spot_lights; sdx++ )
+	else
 	{
-		result += calculate_spot_light( u_spot_lights[ sdx ] );
+		gl_FragColor = vec4(0.0);
 	}
-	for( int ddx = 0; ddx < u_num_directional_lights; ddx++ )
-	{
-		result += calculate_directional_light( u_directional_lights[ ddx ] );
-	}
-	
-	gl_FragColor = vec4( result, 1.0 );
 } 
+
+
+vec4 saturate( vec4 in_col, float amnt )
+{
+	in_col.r = in_col.r + (1.0 - in_col.r) * amnt;
+	in_col.g = in_col.g + (1.0 - in_col.g) * amnt;
+	in_col.b = in_col.b + (1.0 - in_col.b) * amnt;
+	return in_col;
+}
 
 vec3 calculate_point_light( point_light light )
 {

@@ -67,13 +67,13 @@ void main()
 		
 		// normal noise
 		float noise_sum_flat = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;
-		noise_sum_flat = float(u_wave_time) + ( noise_amp * (noise_sum_flat - 2.0) );
-		new_normal = rotate_on_y( noise_sum_flat, -noise_sum_flat, new_normal );
+		float noise_sum_n1_1 = float(u_wave_time) + ( noise_amp * (noise_sum_flat-2.0) );
+		new_normal = rotate_on_y( -noise_sum_n1_1, noise_sum_n1_1, new_normal );
 		
 		// normal displacement
 		new_pos += new_normal*noise_normal_amp;
 		
-		// find wave color:
+		// find wave color
 		v_material_out.ambient = vec3( 0.01, 0.1, 0.06 );
 		v_material_out.diffuse = vec3( 0.01, 0.50980392, 0.50980392 );
 		v_material_out.specular = vec3( 0.50196078, 0.50196078, 0.50196078 );
