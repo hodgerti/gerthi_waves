@@ -59,7 +59,7 @@ Texture				noise_tex;
 
 // WAVES:
 #define WAVE_START 0.5f
-glm::vec3 wave_dimensions			= glm::vec3( 40.0f, 3.0f, 40.0f );
+glm::vec3 wave_dimensions			= glm::vec3( 40.0f, 5.0f, 40.0f );
 int									wave_xoops = 1000, wave_yoops = 0, wave_zoops = 1000;
 int num_waves = NUM_WAVES;
 int current_wave = 0;
@@ -143,28 +143,28 @@ struct point_light point_lights[ NUM_POINT_LIGHTS ] =
 {
 	// light 0
 	{
-		glm::vec3( 4.0f, 5.0f, 4.0f ),	// position
+		glm::vec3( 4.0f, 7.0f, 4.0f ),	// position
 		glm::vec3( 1.0f, 1.0f, 1.0f ),  // color
 		0.1f, 0.8f, 0.8f,				// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.09f, 0.032f			// constant_attenuation, linear_attenuation, quadratic_attenuation
 	},
 	// light 1
 	{
-		glm::vec3( 8.0f, 7.0f, 10.0f ),	// position
+		glm::vec3( 8.0f, 9.0f, 10.0f ),	// position
 		glm::vec3( 1.0f, 0.2f, 0.2f ),  // color
 		0.3f, 0.9f, 0.9f,				// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.09f, 0.032f				// constant_attenuation, linear_attenuation, quadratic_attenuation
 	},
 	// light 2
 	{
-		glm::vec3( 30.0f, 7.0f, 30.0f ),	// position
+		glm::vec3( 30.0f, 9.0f, 30.0f ),	// position
 		glm::vec3( 1.0f, 1.0f, 1.0f ),		// color
 		0.3f, 0.9f, 0.9f,					// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.07f, 0.017f				// constant_attenuation, linear_attenuation, quadratic_attenuation
 	},
 	// light 3
 	{
-		glm::vec3( 35.0f, 6.0f, 5.0f ),		// position
+		glm::vec3( 35.0f, 8.0f, 5.0f ),		// position
 		glm::vec3( 1.0f, 1.0f, 1.0f ),		// color
 		0.3f, 0.9f, 0.9f,					// ambient_strength, diffuse_strength, specular_strength
 		1.0f, 0.07f, 0.017f				// constant_attenuation, linear_attenuation, quadratic_attenuation
@@ -176,7 +176,7 @@ struct spot_light spot_lights[ 2 ] =
 {
 	// light 0
 	{
-		glm::vec3( 15.0f, 5.5f, 15.0f ),	// position
+		glm::vec3( 15.0f, 7.5f, 15.0f ),	// position
 		glm::vec3( 0.1f, -1.0f, -1.0f ),	// direction
 		glm::cos( glm::radians(8.0f) ),		// dim start angle
 		glm::cos( glm::radians(30.5f) ),	// dim end angle
@@ -186,7 +186,7 @@ struct spot_light spot_lights[ 2 ] =
 	},
 	// light 1
 	{
-		glm::vec3( 3.0f, 5.5f, 16.0f ),		// position
+		glm::vec3( 3.0f, 7.5f, 16.0f ),		// position
 		glm::vec3( 0.0f, -1.0f, 0.0f ),		// direction
 		glm::cos( glm::radians(15.0f) ),	// dim start angle
 		glm::cos( glm::radians(18.0f) ),	// dim end angle
