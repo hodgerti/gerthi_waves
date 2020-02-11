@@ -163,6 +163,7 @@
     <ClCompile Include="src\delta_time.cpp" />
     <ClCompile Include="src\glfw_helper.cpp" />
     <ClCompile Include="src\shaders.cpp" />
+    <ClCompile Include="src\skybox.cpp" />
     <ClCompile Include="src\textures.cpp" />
     <ClCompile Include="src\transform.cpp" />
     <ClCompile Include="src\wave_shader.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="src\geometry.h" />
     <ClInclude Include="src\glfw_helper.h" />
     <ClInclude Include="src\shaders.h" />
+    <ClInclude Include="src\skybox.h" />
     <ClInclude Include="src\textures.h" />
     <ClInclude Include="src\transform.h" />
     <ClInclude Include="src\wave_shader.h" />

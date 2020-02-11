@@ -38,6 +38,7 @@ class Camera
 {
 	private:
 		glm::mat4 model;
+		glm::mat4 view;
 		glm::mat4 clip;
 
 		double last_x, last_y, pitch, yaw;
@@ -55,7 +56,7 @@ class Camera
 		double strafe_speed = DFLT_STRAFE_SPEED;
 		double move_speed = DFLT_MOVE_SPEED;
 	
-		void set_world(glm::mat4 model);
+		
 		void move_forward( double );
 		void move_backwards( double );
 		void move_left( double );
@@ -65,11 +66,28 @@ class Camera
 		void set_clip_perspective(double fov, double aspect, double near_plane, double far_plane);
 		void set_clip_orthographic(double width, double height, double near_plane, double far_plane);
 
+		// use current mats and calculate new ones as needed
 		void use_world();
 		void use_view();
 		void use_clip();
-
 		void use( );
+
+		// use temporary mats
+		void use_world( glm::mat4 );
+		void use_view( glm::mat4 );
+		void use_clip( glm::mat4 );
+		void use( glm::mat4, glm::mat4, glm::mat4 );
+		
+		// replace mats
+		void set_world(glm::mat4 model); 
+		void set_view(glm::mat4 model);
+		void set_clip(glm::mat4 model);
+		// get mats
+		glm::mat4 get_world( );
+		glm::mat4 get_view( );
+		glm::mat4 get_clip( );
+
+		glm::mat4 remove_translation( glm::mat4 );
 };
 
 /************************************

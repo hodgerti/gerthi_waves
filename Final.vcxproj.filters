@@ -29,6 +29,9 @@
     <ClCompile Include="src\wave_shader.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\skybox.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="glad">
@@ -82,6 +85,9 @@
       <Filter>stb</Filter>
     </ClInclude>
     <ClInclude Include="src\wave_shader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\skybox.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

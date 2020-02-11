@@ -67,6 +67,7 @@ void main()
 		float noise_speed = float(u_wave_time) * u_waves_infos[KEY_WAVE].frequency/6.283;
 		vec2 wave_direction = noise_speed * u_waves_infos[KEY_WAVE].direction;
 		vec2 noise_coord = wave_direction + vec2(a_tex_coord.x, a_tex_coord.y);
+		noise_coord = vec2(float(noise_coord.x), float(noise_coord.y));
 		vec4 texture_noise = texture2D( u_tex_0, u_noise_freq * noise_coord );
 		
 		// normal noise

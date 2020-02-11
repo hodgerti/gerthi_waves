@@ -15,6 +15,7 @@
 #include <delta_time.h>
 #include <geometry.h>
 #include <textures.h>
+#include <skybox.h>
 
 #include <glad/glad.h>
 #include <glfw3.h>
@@ -55,6 +56,7 @@ GLFWInputHandler	input_handler;
 Camera				camera;
 DeltaTime			delta_time( glfwGetTime );
 Texture				noise_tex;
+Skybox				skybox_texture;
 
 
 // WAVES:
@@ -126,10 +128,12 @@ struct wave_info waves_infos[ NUM_WAVES ] =
 // shaders
 WaveShader	wave_shader;
 Shader		light_shader;
+Shader		skybox_shader;
 
 // buffers
 GLuint vbo_box, vao_box, box_vert_count;
 GLuint vbo_rectprism, vao_rectprism, ebo_rectprism, rectprism_vert_count, rectprism_tri_count;
+GLuint vbo_skybox, vao_skybox, skybox_vert_count;
 
 // colors
 glm::vec4 DAY_BACKCOLOR = glm::vec4( 0.525f, 0.6375f, 0.6125f, 1.0f );  // light blue gray
@@ -209,6 +213,17 @@ struct directional_light directional_lights[ 1 ] =
 	}
 };
 glm::vec3 sun_position = glm::vec3( -100.0f, 100.0f, 100.0f );
+
+// textures
+struct cubemap_textures skybox_textures =
+{
+	ASSETS_DIRECTORY"skybox_right.jpg",
+	ASSETS_DIRECTORY"skybox_left.jpg",
+	ASSETS_DIRECTORY"skybox_top.jpg",
+	ASSETS_DIRECTORY"skybox_bottom.jpg",
+	ASSETS_DIRECTORY"skybox_front.jpg",
+	ASSETS_DIRECTORY"skybox_back.jpg"
+};
 
 
 /************************************
@@ -358,6 +373,21 @@ int init( )
 	noise_tex.add_parameteri( GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	noise_tex.load( ASSETS_DIRECTORY"noise.jpg" );
 
+	// skybox
+	skybox_texture.load( skybox_textures );
+	skybox_shader.set_shaders( VERT_SHADERS"skybox.vert", FRAG_SHADERS"skybox.frag" );
+	skybox_vert_count = sizeof(skybox_vertices)/(sizeof(float)*3);
+    glGenVertexArrays(1, &vao_skybox);
+    glGenBuffers(1, &vbo_skybox);
+    glBindVertexArray(vao_skybox);
+      glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(skybox_vertices), skybox_vertices, GL_STATIC_DRAW);
+      // position attribute
+      glVertexAttribPointer(Shader::a_pos, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+      glEnableVertexAttribArray(Shader::a_pos);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	return 0;
 
 }  //  init  /
@@ -393,11 +423,23 @@ void display( )
 	else			glClearColor( NIGHT_BACKCOLOR.r, NIGHT_BACKCOLOR.g, NIGHT_BACKCOLOR.b, NIGHT_BACKCOLOR.a );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+	// sky box:
+	glDepthMask( GL_FALSE );
+	skybox_shader.use( );
+	camera.shader_id = skybox_shader.get_program( );
+	camera.use_view( );
+	camera.use_clip( );
+	camera.use_view( camera.remove_translation( camera.get_view() ) );
+	glBindVertexArray( vao_skybox );
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_texture.texture_id );
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDepthMask( GL_TRUE );
+
 	// render lights:
 	light_shader.use( );
 
-    glm::mat4 model;
 	// point lights
+	glm::mat4 model = glm::mat4(1.0f);
 	for( int pdx = 0; pdx < num_point_lights; pdx++ )
 	{
 		model = glm::mat4(1.0f);
