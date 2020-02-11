@@ -31,6 +31,7 @@ struct wave_info
 	vec2 direction;
 };
 #define NUM_WAVES		64
+#define KEY_WAVE		0
 uniform int				u_num_waves;
 uniform wave_info 		u_waves_infos[ NUM_WAVES ];
 uniform float			u_wave_time;
@@ -63,8 +64,10 @@ void main()
 		new_normal = gerstner_wave_normal( new_pos, u_wave_time );
 		
 		// noise
-		float noise_speed = float(u_wave_time) * u_waves_infos[0].frequency/6.283;  // key off first wave which is assumed to be the trendsetter
-		vec4 texture_noise = texture2D( u_tex_0, u_noise_freq * vec2(noise_speed+a_tex_coord.x, a_tex_coord.y) );
+		float noise_speed = float(u_wave_time) * u_waves_infos[KEY_WAVE].frequency/6.283;
+		vec2 wave_direction = noise_speed * u_waves_infos[KEY_WAVE].direction;
+		vec2 noise_coord = wave_direction + vec2(a_tex_coord.x, a_tex_coord.y);
+		vec4 texture_noise = texture2D( u_tex_0, u_noise_freq * noise_coord );
 		
 		// normal noise
 		float noise_sum_flat = texture_noise.r + texture_noise.g + texture_noise.b + texture_noise.a;

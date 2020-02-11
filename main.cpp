@@ -22,9 +22,9 @@
 /************************************
 * Definitions
 *************************************/
-#define CONTEXT_TITLE		"LearnOpenGL"
-#define WINDOW_WIDTH		1024
-#define WINDOW_HEIGHT		1024
+#define CONTEXT_TITLE		"Gerthi Waves"
+#define WINDOW_WIDTH		1080
+#define WINDOW_HEIGHT		1080
 
 /************************************
 * Defines
